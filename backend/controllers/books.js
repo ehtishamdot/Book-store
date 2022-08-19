@@ -1,5 +1,5 @@
 const asyncWrapper = require("../middleware/async");
-
+const auth = require('../middleware/auth');
 const { bookModel, validateBook } = require("../models/Book");
 
 const getAllBooks = asyncWrapper(async (req, res, next) => {
@@ -18,22 +18,29 @@ const getSingleBook = asyncWrapper(async (req, res, next) => {
 });
 
 const createBook = asyncWrapper(async (req, res) => {
-  // const valid = validateBook(req.body);
-  // if (valid.error) return res.status(400).send(valid.error.details[0].message);
-  console.log(req.body);
-
-  const book = await bookModel.create(req.body);
-  res.status(200).json(req.body);
+  console.log(req.user);
+    const valid = validateBook(req.body);
+    if(valid.error) return res.status(400).send(valid.error.details[0].message);
+    const book = new bookModel({
+        booktitle: req.body.booktitle,
+        description: req.body.description,
+        tags: req.body.tags,
+        author: {
+            adminId: req.user,
+            username: req.body.username,
+            bio: req.body.bio
+        }
+    })
+    await book.save()
+    res.send(book);
 });
 
 const updateBook = asyncWrapper(async (req, res) => {
   const book = await bookModel
-    .findById(req.body._id)
-    .select({ onDownload: 1, author: 1 });
+    .findById(req.params.id);
   if (!book) return res.status(400).send("Book not found");
 
-  console.log(book.onDownload, book.author);
-  if (book.author.authorId != req.user._id)
+  if (book.author.adminId != req.user._id)
     return res.status(401).send("Access Denied");
 
   book.onDownload = true;
@@ -42,9 +49,21 @@ const updateBook = asyncWrapper(async (req, res) => {
   res.send(book);
 });
 
+const deleteBook = asyncWrapper(async (req,res) => {
+  const book =  await bookModel.findById(req.params.id);
+  if (!book) return res.status(400).send("Book not found");
+
+  if (book.author.adminId != req.user._id)
+    return res.status(401).send("Access Denied");
+   
+  await bookModel.findByIdAndDelete(req.params.id);
+  res.send(book);
+})
+
 module.exports = {
   getAllBooks,
   getSingleBook,
   createBook,
   updateBook,
+  deleteBook
 };

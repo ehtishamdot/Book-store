@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "bcrypt": "^5.0.1",
-    "config": "^3.3.7",
-    "jsonwebtoken": "^8.5.1"
-  }
-}

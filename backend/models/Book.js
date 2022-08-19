@@ -22,22 +22,22 @@ const bookSchema = new mongoose.Schema({
   },
   author: {
     type: new mongoose.Schema({
-      authorId: mongoose.Types.ObjectId,
-      username: {
+      adminId: {type: mongoose.Types.ObjectId, required: true },
+      authorName: {
         type: String,
         required: true,
         minlenth: 2,
         maxlength: 50,
         trim: true,
+        default: "anonymous"
       },
-      bio: {
+      authorBio: {
         type: String,
         minlenth: 2,
         maxlength: 1024,
         trim: true,
       },
-    }),
-    required: true,
+    })
   },
   onDownload: {
     type: Boolean,
@@ -75,6 +75,8 @@ const bookModel = mongoose.model("Book", bookSchema);
 const validateBook = (body) => {
   const schema = Joi.object({
     booktitle: Joi.string().min(2).max(255).required(),
+    authorName : Joi.string().min(2).max(50).optional(),
+    authorBio: Joi.string().min(5).max(1024).optional()
   });
   return schema.validate(body);
 };
