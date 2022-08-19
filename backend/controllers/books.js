@@ -1,5 +1,5 @@
 const asyncWrapper = require("../middleware/async");
-const auth = require('../middleware/auth');
+const auth = require("../middleware/auth");
 const { bookModel, validateBook } = require("../models/Book");
 
 const getAllBooks = asyncWrapper(async (req, res, next) => {
@@ -19,25 +19,24 @@ const getSingleBook = asyncWrapper(async (req, res, next) => {
 
 const createBook = asyncWrapper(async (req, res) => {
   console.log(req.user);
-    const valid = validateBook(req.body);
-    if(valid.error) return res.status(400).send(valid.error.details[0].message);
-    const book = new bookModel({
-        booktitle: req.body.booktitle,
-        description: req.body.description,
-        tags: req.body.tags,
-        author: {
-            adminId: req.user,
-            username: req.body.username,
-            bio: req.body.bio
-        }
-    })
-    await book.save()
-    res.send(book);
+  const valid = validateBook(req.body);
+  if (valid.error) return res.status(400).send(valid.error.details[0].message);
+  const book = new bookModel({
+    booktitle: req.body.booktitle,
+    description: req.body.description,
+    tags: req.body.tags,
+    author: {
+      adminId: req.user,
+      username: req.body.username,
+      bio: req.body.bio,
+    },
+  });
+  await book.save();
+  res.send(book);
 });
 
 const updateBook = asyncWrapper(async (req, res) => {
-  const book = await bookModel
-    .findById(req.params.id);
+  const book = await bookModel.findById(req.params.id);
   if (!book) return res.status(400).send("Book not found");
 
   if (book.author.adminId != req.user._id)
@@ -49,21 +48,21 @@ const updateBook = asyncWrapper(async (req, res) => {
   res.send(book);
 });
 
-const deleteBook = asyncWrapper(async (req,res) => {
-  const book =  await bookModel.findById(req.params.id);
+const deleteBook = asyncWrapper(async (req, res) => {
+  const book = await bookModel.findById(req.params.id);
   if (!book) return res.status(400).send("Book not found");
 
   if (book.author.adminId != req.user._id)
     return res.status(401).send("Access Denied");
-   
+
   await bookModel.findByIdAndDelete(req.params.id);
   res.send(book);
-})
+});
 
 module.exports = {
   getAllBooks,
   getSingleBook,
   createBook,
   updateBook,
-  deleteBook
+  deleteBook,
 };
