@@ -18,34 +18,34 @@ const getSingleBook = asyncWrapper(async (req, res, next) => {
 });
 
 const createBook = asyncWrapper(async (req, res) => {
-  console.log(req.user);
-  const valid = validateBook(req.body);
-  if (valid.error) return res.status(400).send(valid.error.details[0].message);
-  const book = new bookModel({
-    booktitle: req.body.booktitle,
-    description: req.body.description,
-    tags: req.body.tags,
-    author: {
-      adminId: req.user,
-      username: req.body.username,
-      bio: req.body.bio,
-    },
-  });
+  // const valid = validateBook(req.body);
+  // if (valid.error) return res.status(400).send(valid.error.details[0].message);
+
+  const book = new bookModel(req.body);
   await book.save();
   res.send(book);
 });
 
 const updateBook = asyncWrapper(async (req, res) => {
+  console.log(req.params.id);
+
   const book = await bookModel.findById(req.params.id);
   if (!book) return res.status(400).send("Book not found");
 
-  if (book.author.adminId != req.user._id)
-    return res.status(401).send("Access Denied");
+  // if (book.author?.adminId != req.user._id)
+  //   return res.status(401).send("Access Denied");
 
-  book.onDownload = true;
+  const updatedBook = await bookModel.findOneAndUpdate(
+    req.params.id,
+    req.body,
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
 
-  await book.save();
-  res.send(book);
+  await updatedBook.save();
+  res.send(updatedBook);
 });
 
 const deleteBook = asyncWrapper(async (req, res) => {

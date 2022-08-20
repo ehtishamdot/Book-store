@@ -14,9 +14,9 @@ route.post("/", async (req, res) => {
 
   if (!validPassword) return res.status(400).send("Invalid Email or Password");
 
-  admin.genrateToken();
+  const token = admin.genrateToken();
 
-  res.send(true);
+  res.send({ status: true, token });
 });
 
 const loginValidator = (body) => {

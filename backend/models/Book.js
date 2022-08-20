@@ -13,7 +13,6 @@ const bookSchema = new mongoose.Schema({
     type: String,
     minlenth: 5,
     maxlength: 1024,
-    trim: true,
   },
   tags: {
     type: Array,
@@ -22,14 +21,14 @@ const bookSchema = new mongoose.Schema({
   },
   author: {
     type: new mongoose.Schema({
-      adminId: {type: mongoose.Types.ObjectId, required: true },
+      adminId: { type: mongoose.Types.ObjectId, required: true },
       authorName: {
         type: String,
         required: true,
         minlenth: 2,
         maxlength: 50,
         trim: true,
-        default: "anonymous"
+        default: "anonymous",
       },
       authorBio: {
         type: String,
@@ -37,7 +36,7 @@ const bookSchema = new mongoose.Schema({
         maxlength: 1024,
         trim: true,
       },
-    })
+    }),
   },
   onDownload: {
     type: Boolean,
@@ -61,13 +60,10 @@ const bookSchema = new mongoose.Schema({
       default: 0,
     },
   },
-  review: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Reviews",
-    },
-  ],
-  download: Number,
+  download: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const bookModel = mongoose.model("Book", bookSchema);
@@ -75,8 +71,8 @@ const bookModel = mongoose.model("Book", bookSchema);
 const validateBook = (body) => {
   const schema = Joi.object({
     booktitle: Joi.string().min(2).max(255).required(),
-    authorName : Joi.string().min(2).max(50).optional(),
-    authorBio: Joi.string().min(5).max(1024).optional()
+    authorName: Joi.string().min(2).max(50).optional(),
+    authorBio: Joi.string().min(5).max(1024).optional(),
   });
   return schema.validate(body);
 };

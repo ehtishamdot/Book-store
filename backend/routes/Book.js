@@ -11,8 +11,8 @@ const {
 } = require("../controllers/books");
 
 router.route("/").get(getAllBooks);
-router.post("/", auth, createBook);
 router.route("/:id").get(getSingleBook);
+router.post("/", auth, createBook);
 router.patch("/:id", auth, updateBook);
 router.delete("/:id", auth, deleteBook);
 module.exports = router;
