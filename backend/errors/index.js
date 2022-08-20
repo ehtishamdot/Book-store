@@ -1,9 +1,9 @@
-import { CustomAPIError } from "./custom-error";
-import { BadRequestError } from "./bad-request";
-import { UnauthorizedError } from "./unauthorized";
+const { CustomAPIError } = require("./custom-error");
+const { BadRequest } = require("./bad-request");
+const { Unauthorized } = require("./unauthorized");
 
 module.exports = {
   CustomAPIError,
-  BadRequestError,
-  UnauthorizedError,
+  BadRequest,
+  Unauthorized,
 };

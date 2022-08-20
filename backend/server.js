@@ -6,6 +6,7 @@ const reviews = require("./routes/Review");
 const connectDB = require("./db/connect");
 const newadmin = require("./routes/admin");
 const loginadmin = require("./routes/login");
+const errorHandlerMiddleware = require("./middleware/error-handler");
 
 app.use(express.json());
 
@@ -13,6 +14,8 @@ app.use("/api/v1/register", newadmin);
 app.use("/api/v1/login", loginadmin);
 app.use("/api/v1/books", books);
 app.use("/api/v1/reviews", reviews);
+
+app.use(errorHandlerMiddleware);
 
 const port = process.env.PORT || 5000;
 
