@@ -16,7 +16,7 @@ route.post("/", async (req, res) => {
 
   const token = admin.genrateToken();
 
-  res.send({ status: true, token });
+  res.header("x-auth-token", token).send({ status: true, token });
 });
 
 const loginValidator = (body) => {
